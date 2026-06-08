@@ -6,8 +6,8 @@ from tensorflow.keras import layers, models, optimizers
 from sklearn.model_selection import train_test_split
 
 # --- CONFIGURAÇÕES ---
-IMG_DIR = 'D:/Dados_Grades_Jirau/dataset/train/imagens'
-MASK_DIR = 'D:/Dados_Grades_Jirau/dataset/train/masks'
+IMG_DIR = 'data/imagens'
+MASK_DIR = 'data/masks'
 PATCH_SIZE = 256
 NUM_CLASSES = 6
 
@@ -123,5 +123,5 @@ history = model.fit(x_train, y_train,
                     #batch_size=8
                     batch_size=4)
 
-model.save("modelo_sonar_unet.h5")
+model.save("models/modelo_sonar_unet.h5")
 print("Modelo salvo com sucesso!")

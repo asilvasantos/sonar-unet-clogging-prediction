@@ -5,17 +5,9 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 
 # --- 1. CONFIGURAÇÕES ---
-MODEL_PATH = 'modelo_sonar_unet.h5'
+MODEL_PATH = '/models/modelo_sonar_unet.h5'
 
-#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_015.png' # Ajuste o nome aqui
-#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_leve_140.png' # Ajuste o nome aqui
-#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_001.png' # Ajuste o nome aqui
-#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_037.png'
-#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_033.png'
-#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_050.png' 
-#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_026.png' 
-TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_038.png' 
-#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_038.png' 
+TEST_IMAGE_PATH = '/data/sem_anotacao/obstrucao_moderada_038.png' 
 
 PATCH_SIZE = 256
 
