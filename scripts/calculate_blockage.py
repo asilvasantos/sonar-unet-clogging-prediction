@@ -1,3 +1,49 @@
+"""
+====================================================================================================
+SCRIPT DE INFERÊNCIA MULTICLASSE, FATIAMENTO (PATCHES) E MAPEAMENTO DE RISCO POR REJAS
+====================================================================================================
+
+DESCRIÇÃO DO MÓDULO:
+    Este script realiza a aplicação prática do modelo U-Net treinado sobre matrizes acústicas 
+    completas (imagens brutas de SONAR). Ele automatiza o pipeline de segmentação através de um 
+    algoritmo de fatiamento espacial em submatrizes (patches) homogêneos de 256x256 pixels, 
+    executa a inferência bloco a bloco e reconstrói o Mapa de Risco correlacionando os IDs 
+    de predição às assinaturas físicas de obstrução.
+
+PRINCIPAIS COMPONENTES E WORKFLOW:
+    1. Pré-processamento e Redimensionamento Adaptativo: Ajusta as dimensões da matriz original 
+       para garantir que sejam perfeitamente múltiplas do tamanho do patch (PATCH_SIZE = 256), 
+       prevenindo erros de truncamento ou perda residual nas bordas.
+    2. Fatiamento e Predição por Blocos (Sliding Window/Patches): Divide a imagem em grelhas, 
+       aplica a inferência convolucional por bloco e consolida os resultados via Argmax na 
+       matriz final de IDs.
+    3. Reconstrução Vetorial RGB (COLOR_MAP): Traduz a matriz lógica de predição numérica (IDs de 0 a 5) 
+       nas cores exatas configuradas na plataforma de anotação CVAT.
+    4. Exibição e Exportação de Diagnóstico: Gera visualizações comparativas utilizando Matplotlib, 
+       aplica legendas técnicas e exporta o relatório rasterizado final (.png).
+
+CLASSES ACÚSTICAS CONFIGURADAS (Padrão Teórico):
+    - ID 0: Fundo / Matriz Não Identificada (Preto)
+    - ID 1: Banco de Sedimento (Azul)
+    - ID 2: Galhos / Material Lenhoso - LWD (Amarelo/Verde Lima)
+    - ID 3: Obstrução Leve / Moderada (Ciano)
+    - ID 4: Obstrução Severa / Colmatada (Rosa/Magenta)
+    - ID 5: Sem Obstrução / Área de Grade Livre (Verde Escuro)
+
+HISTÓRICO DE VERSÕES:
+    Versão: 1.0.0
+    Data: Junho de 2026
+    Autor: Alexandre Silva dos Santos 
+    Status: Módulo de Validação e Teste Local / Pipelines de Inferência Estruturada
+
+REQUISITOS AMBIENTAIS ACTIVE VENV:
+    - tensorflow / tensorflow-directml
+    - opencv-python (cv2)
+    - numpy
+    - matplotlib
+====================================================================================================
+"""
+
 import cv2
 import numpy as np
 import tensorflow as tf
@@ -5,9 +51,17 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 
 # --- 1. CONFIGURAÇÕES ---
-MODEL_PATH = '/models/modelo_sonar_unet.h5'
+MODEL_PATH = 'modelo_sonar_unet.h5'
 
-TEST_IMAGE_PATH = '/data/sem_anotacao/obstrucao_moderada_038.png' 
+#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_015.png' # Ajuste o nome aqui
+#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_leve_140.png' # Ajuste o nome aqui
+#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_001.png' # Ajuste o nome aqui
+#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_037.png'
+#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_033.png'
+#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_050.png' 
+#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_026.png' 
+TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_007.png' 
+#TEST_IMAGE_PATH = 'D:/Dados_Grades_Jirau/dataset/train/sem_anotacao/obstrucao_moderada_038.png' 
 
 PATCH_SIZE = 256
 

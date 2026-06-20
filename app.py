@@ -1,3 +1,56 @@
+#+-------------------------------------------------------+
+#|Projeto: Sistema de Suporte à Decisão (SSD)            |
+#|Autor: Alexandre Silva dos Santos                      |
+#|Descrição: Script de processamento da regionalização   |
+#|           dos dados da LOA.                           | 
+#|Data começo: 07/06/2025                                |
+#|Data fim: 20/06/2026                                   |
+#+-------------------------------------------------------+
+"""
+====================================================================================================
+SISTEMA DE SUPORTE À DECISÃO (SSD) - MONITORAMENTO PREDITIVO DE TOMADAS DE ÁGUA
+====================================================================================================
+INFORMAÇÕES AUTORIA:
+    AUTOR: Alexandre Silva dos Santos
+    E-MAIL: alexandresantoscompunb@gmail.com
+    DATA INÍCIO:    07/06/2025
+    DATA CONCLUSÃO: 20/06/2026
+
+DESCRIÇÃO DO MÓDULO:
+    Este software integra Inteligência Artificial (Rede Neural Convolucional U-Net Multiclasse) 
+    e modelagem dinâmica hidrológica para automação do monitoramento de obstruções físicas em 
+    grades de proteção (rejas) de tomadas de água em plantas hidroenergéticas operando a fio d'água.
+
+PRINCIPAIS FUNCIONALIDADES:
+    1. Delimitação Geométrica Interativa: Permite ao operador selecionar a Região de Interesse 
+       (ROI) correspondente à grade utilizando um componente de canvas interativo.
+    2. Segmentação Semântica por IA: Classifica matrizes acústicas brutas (imagens de SONAR) 
+       em 6 classes teóricas distintas sem a necessidade de filtragem espacial destrutiva.
+    3. Binarização Dinâmica e Tobs: Permite a seleção customizada de classes restritivas para o 
+       cálculo em tempo real da Taxa de Obstrução Instantânea (Tobs).
+    4. Engenharia Preditiva (Tman): Calcula a janela temporal de segurança e a taxa de avanço 
+       da colmatação com base em Fatores de Aporte Hidrológico Dinâmico (Vobs) sazonais.
+
+ARQUITETURA DE ACELERAÇÃO:
+    Backend: TensorFlow 2.x otimizado via API DirectML para aceleração por hardware local
+    GPU Alvo: NVIDIA GeForce MX330 (Suporte à alocação dinâmica de memória: Allow Growth)
+
+HISTÓRICO DE VERSÕES:
+    Versão: 1.0.0
+    Data: Junho de 2026
+    Autor: Alexandre Silva dos Santos et al.
+    Vínculo: Programa de Pós-Graduação / Acervo Técnico-Metodológico
+    Status: Pronto para Produção / Validação Ciberfísica
+
+DEPENDÊNCIAS REQUISITADAS (Ambiente Virtual Ativo):
+    - streamlit
+    - streamlit_drawable_canvas
+    - tensorflow (ou tensorflow-directml)
+    - opencv-python (cv2)
+    - numpy
+    - Pillow
+====================================================================================================
+"""
 import os
 import sys
 
@@ -90,8 +143,8 @@ LIMITE_CRITICO = 80.0
 if arquivo_upload is not None:
     imagem_pil_orig = Image.open(arquivo_upload).convert("RGB")
     
-    LARGURA_PADRAO = 700
-    ALTURA_PADRAO = 500
+    LARGURA_PADRAO = 500
+    ALTURA_PADRAO = 650
     imagem_pil = imagem_pil_orig.resize((LARGURA_PADRAO, ALTURA_PADRAO), Image.Resampling.LANCZOS)
     imagem_np = np.array(imagem_pil)
     
@@ -209,7 +262,21 @@ if arquivo_upload is not None:
                         imagem_segmentada_colorida[mascara_roi == 0] = [0, 0, 0]
                         
                         imagem_overlay = cv2.addWeighted(imagem_np, 0.7, imagem_segmentada_colorida, 0.3, 0)
-                        st.image(imagem_overlay, caption="Mapa de Risco Gerado pela U-Net (Restrito à ROI)", use_column_width=True)
+                        
+                        # --- CRIAÇÃO DE COLUNAS LADO A LADO (IMAGEM E LEGENDA) ---
+                        col_img, col_leg = st.columns([2, 1])  # Proporção 2 para a imagem, 1 para a legenda
+                        
+                        with col_img:
+                            st.image(imagem_overlay, caption="Mapa de Risco Gerado pela U-Net (Restrito à ROI)", width=400)
+                        
+                        with col_leg:
+                            st.markdown("#### 🗺️ Legenda do Mapa")
+                            st.markdown("🔵 **ID 1:** Banco de Sedimento")
+                            st.markdown("🟡 **ID 2:** Galhos / Mat. Lenhoso")
+                            st.markdown("🌐 **ID 3:** Obstrução Leve")
+                            st.markdown("🔴 **ID 4:** Obstrução Severa")
+                            st.markdown("🟢 **ID 5:** Grade Limpa")
+                            st.markdown("⬛ **ID 0:** Fora da ROI")
     else:
         with col2:
             st.info("Aguardando a definição do Box delimitador da grade na imagem da esquerda.")
