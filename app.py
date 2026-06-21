@@ -1,20 +1,12 @@
-#+-------------------------------------------------------+
-#|Projeto: Sistema de Suporte à Decisão (SSD)            |
-#|Autor: Alexandre Silva dos Santos                      |
-#|Descrição: Script de processamento da regionalização   |
-#|           dos dados da LOA.                           | 
-#|Data começo: 07/06/2025                                |
-#|Data fim: 20/06/2026                                   |
-#+-------------------------------------------------------+
 """
 ====================================================================================================
 SISTEMA DE SUPORTE À DECISÃO (SSD) - MONITORAMENTO PREDITIVO DE TOMADAS DE ÁGUA
 ====================================================================================================
-INFORMAÇÕES AUTORIA:
-    AUTOR: Alexandre Silva dos Santos
-    E-MAIL: alexandresantoscompunb@gmail.com
-    DATA INÍCIO:    07/06/2025
-    DATA CONCLUSÃO: 20/06/2026
+INFORMAÇÕES AUTOR:
+    Nome: Alexandre Silva dos Santos
+    e-mail: alexandresantoscompunb@gmail.com
+    Data início: 07/06/2025
+    Data conclusão (v1): 20/06/2026
 
 DESCRIÇÃO DO MÓDULO:
     Este software integra Inteligência Artificial (Rede Neural Convolucional U-Net Multiclasse) 
